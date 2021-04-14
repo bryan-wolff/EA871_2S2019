@@ -1,0 +1,144 @@
+RASCUNHO---------------------------
+modo normal, ou seja, contagem até o valor máximo (255)
+prescaler = 8 e interrupção por overflow ativa. Nessa configuração, qual é o intervalo de tempo entre as
+interrupções?
+temporizador 2, configurado conforme especificado no item anterior, para piscar o LED do
+pino 13. O LED deve permanecer 256 ms em cada estado.
+
+TCCR2A: 0 0 0 0 _ _ 0 0
+TCCR2B: 0 0 _ _ 0 0 1 0
+TIMSK2 _ _ _ _ _ 0 0 1
+
+interrupção: Overflow do Temporizador 2
+TIMER2_0VF_vect 
+
+------------------------------------------
+
+interrupção: Compare Match A
+TIMER2_COMPA_vect
+
+interrupção: Compare Match B
+TIMER2_COMPB_vect
+
+interrupção: Overflow timer/counter 2
+
+LED incorporado pisque com uma frequência de 2 Hz (0,5 s
+aceso, 0,5 s apagado)
+bit 5 porta b
+PORTB
+
+LED externo, conectado ao pino 12 da placa Arduino, pisque de forma a
+ficar 0,78 s aceso e 0,78 s apagado.
+porta B bit 6
+PORTB
+
+TCCR2A - Timer/Counter Control Register A
+bit 0: 0 Para modo de operaçao CTC
+bit 1: 1 Para modo de operaçao CTC
+bit 2: não mexer
+bit 3: não mexer
+bit 4: 0 Operação normal da porta, OC0B desconectado. REVISAR
+bit 5: 0 Operação normal da porta, OC0B desconectado. REVISAR
+bit 6: 0 Operação normal da porta, OC0A desconectado. REVISAR
+bit 7: 0 Operação normal da porta, OC0A desconectado. REVISAR
+
+TCCR2B - Timer/Counter Control Register B
+bit 0: 0 define a frequência de operação do temporizador de x defenindo um prescaler de y
+bit 1: 0 define a frequência de operação do temporizador de x defenindo um prescaler de y
+bit 2: 1 define a frequência de operação do temporizador de x defenindo um prescaler de y
+bit 3: 0 Para modo de operaçao CTC
+bit 4: Não mexer
+bit 5: Não mexer
+bit 6: 0 REVISAR 
+bit 7: 0 REVISAR
+
+
+TIMSK2 - Timer/Counter Control Register B
+bit 0: 0 desabilita a interrupção Timer/Counter2 Overflow 
+bit 1: 1 habilita a interrupção Timer/Counter2 Output Compare Match A
+bit 2: 0 desabilita a interrupção associada ao Timer/Counter2 Output Compare Match B
+bit 3: Não mexer
+bit 4: Não mexer
+bit 5: Não mexer
+bit 6: Não mexer
+bit 7: Não mexer
+
+OCR2A – Output Compare Register A = 
+
+
+compare match register = [16.000.000Hz / (prescaler * ( 1 / periodo de tempo desejado)] - 1
+
+
+t
+
+
+Compare match register = [16000000/ (1024 * (1/0,01))] - 1 = 155,25 = 155
+
+--------------------------------------------------
+prescaler 1024, tempo 0,008 = 124
+chamar 97,5 vezes a rotina de interrupção para 0,78 s
+chamar 62,5 vezes a rotina de interrupção para 0,5s
+-------------------------------------------------------
+prescaler 1024, tempo 0,16 = 249
+chamar 31,25 vezes a rotina de interupção para 0,5
+	48,75			0,78
+
+--------------------------------------------------
+*********************************************
+prescaler = 64, periodo de tempo = 0,001, OCR2A = 249 (ou 250?)
+chamar 780 vezes a rotina de interrupção para 0,78 s
+chamar 500 vezes a rotina de interrupção para 0,5s
+*********************************************
+*********************************************
+prescaler = 256, periodo de tempo = 0,002, OCR2A = 124 (ou 125?)
+chamar 390 vezes a rotina de interrupção para 0,78 s
+chamar 250 vezes a rotina de interrupção para 0,5s
+*********************************************
+
+----------------------------------
+
+// carrega registrador de comparação
+compare match register = [16.000.000Hz / (prescaler * frequência de interrupção desejada )] - 1
+ou
+compare match register = [16.000.000Hz / (prescaler * ( 1 / periodo de tempo desejado)] - 1
+
+lembre-se de que, quando você usa os temporizadores 0 e 2, esse número deve ser menor que 256 e menor que 65536 para o timer1;
+
+
+
+
+
+	TCCR2A = 0b00000010;
+	TCCR2B = 0b00000100;
+	TIMSK2 = 0b00000010;
+	OCR2A = 124;
+
+
+
+simone
+
+TCCR2A |= 0b11000010;
+TCCR2B |= 0b00000011;
+TIMSK2 |= 0b00000011;
+
+
+
+
+	//CONFIGURAÇÂO DO TEMPORIZADOR 2
+	TCCR2A = (TCCR2A |= 0b00000010) & 0b00001110; //configura o temporizador para modo de operação CTC. OC0B e OC0A desconectado
+ 	TCCR2B = (TCCR2B |= 0b00000100) & 0b00110100;	//Aqui define um prescaler de 256
+ 	TIMSK2 = (TIMSK2 |= 0b00000010) & 0b11111010;	//habilita apenas a interrupção associada ao Timer/Counter2 Output Compare Match A
+	OCR2A = 124; // carrega o valor 124 no registrador de comparação
+				
+
+
+
+
+
+
+
+
+
+
+
+

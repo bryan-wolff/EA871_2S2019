@@ -1,0 +1,37 @@
+velocidade normal
+
+bit start
+paridade impar
+um bit stop
+
+baud rate 38400
+
+8 bits de dados, entao 011
+
+A
+bit 1 = 0 para velocidade normal
+bit 0 = 0 para desativar o modo de comunicacao multi-processador
+
+B:
+bit 7,6,5 = 0 para desativar as interrupcoes relacionadas a USART
+bit 4 = 0 desativar receptor
+bit 3 = 1 ativar transmissor
+bit 2 = 0 para definir 8 bit de dados
+bit 1,0 = 0 desativar 9° bit de dado
+
+C:
+bit 7 = 0 USART assincrono
+bit 6 = 0 USART assíncrono
+bit 5 = 1 Paridade impar
+bit 4 = 1 paridade impar
+bit 3 = 0 para um unico bit de parada
+bit 2 = 1 para definir 8 bit de dados
+bit 1 = 1 para definir 8 bit de dados
+bit 0 = 0 para transimssao assíncrona
+
+
+
+o buffer de transmissao TXB só pode ser escrito se a flag UDRE0 (bit 5) de UCSR0A estiver setada.
+
+
+atraso de 5 segundos antes de iniciar outra transmissao

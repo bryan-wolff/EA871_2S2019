@@ -1,0 +1,120 @@
+largura tem que ir de 0 até o max em 1s
+e voltar até 0 em 1s
+prescale factor (1, 8, 32, 64, 128, 256, or 1024)
+configurar ddr
+PWM fast mode
+o Sinal PWM será gerado no pino 11, OC2A
+WGM controla limite superior?
+
+
+TCCR2A: timer/counter control register A
+0: 1 para PWM fast Mode
+1: 1 para PWM fast Mode
+2: RESERVADO (não mexer)
+3: RESERVADO (não mexer)
+4: 0 Normal port operation, OC2B disconnected.
+5: 0 Normal port operation, OC2B disconnected.
+6: 0 non-inverting mode (Clear OC2A on Compare Match, set OC2A at BOTTOM) (REVISAR)
+7: 1 OC2A conectado na porta
+
+TCCR2B: timer/counter control register B
+0: 0 prescaler 8
+1: 1 prescaler 8
+2: 0 prescaler 8
+3: 0 fast mode PWM TOV flag set on MAX (0xFF) (REVISAR)
+4: RESERVADO (não mexer)
+5: RESERVADO (não mexer)
+6: 0
+7: 0
+
+TIMSK: Timer/counter2 interrupt mask register
+0: 0 Timer/Counter2 Overflow Interrupt Enable
+1: 1 Timer/Counter2 Output Compare Match A Interrupt Enable
+2: 0 Timer/Counter2 Output Compare Match B Interrupt Enable
+3: RESERVADO (não mexer)
+4: RESERVADO (não mexer)
+5: RESERVADO (não mexer)
+6: RESERVADO (não mexer)
+7: RESERVADO (não mexer)
+
+
+TCNT2: Timer/Counter Register
+
+OCR2A: Output Compare register A
+
+Interrupções associadas ao timer 2:
+TIMER_COMPA_vect
+TIMER_COMPB_vect
+TIMER_OVF_vect
+
+***************************
+PWM não invertido
+frequencia de saída A: 16mhz/ [(256 Ciclos do contador) * prescaler]
+
+duty cicle A (%) = (OCR2A + 1)/256 (ciclos do timer)
+
+Vm = amplitude x duty cycle
+duty cycle = Largura/periodo
+Vm deve ir de 0 até 5
+Vm = 5 * L/T
+
+
+
+OCR2A = 0 intensidade é a minima
+OCR2A = 255 intensidade é a maxima
+***************************
+
+1s / 256 ciclos = 0,00390625s
+
+OCR2A deve ser incrementado/decrementado a cada 0,00390625s
+
+
+se prescaler é 256 a frequencia de overflow é (16mhz/256/256) = 244.140625 Hz = 0,004096s
+
+se prescaler é 8 a frequencia de overflow é (16mhz/8/256) = 0,000128s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+contador++;
+		 	if (contador == 10000) {
+		 		contador = 0;
+		 		contador2++;
+				 
+		 		if (contador2 == 255) {
+		 			if (sentido == 0) sentido = 1;
+		 			else sentido = 0;
+		 			contador2 = 0;
+		 		}
+		
+		 		if (sentido == 0){
+					if (OCR2A != 255) OCR2A++;
+		 		}
+		
+		 		else {
+					 if (OCR2A != 0) OCR2A--;
+		 		}
+	
+		 	}

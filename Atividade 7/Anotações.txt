@@ -1,0 +1,65 @@
+
+
+
+baudrate 9600bps
+103 decimal 0x0067
+
+unsigned char *pddrb = (unsigned char*) 0x24;	//DDRB
+unsigned char *pportb = (unsigned char*) 0x25;//PORTB
+*pddrb |= 0b00000111;
+asm("sei"); //liga as interrupções
+
+//vetor com as cores do led RGB na ordem: apagado, vermelho, verde, azul, amarelo, ciano, magenta e branco.
+unsigned char led[8] = {0b00000000,0b00000001,0b00000010,0b00000100,0b0000011,0b00000110,0b00000101,0b00000111};
+
+
+------------------------------------------------------------------
+A:
+bit 1 = 0 velocidade normal
+bit 0 = 0 desativar modo de comunicação multi-processador
+
+
+B:
+bit 7 = 1 ativar interrupção do tipo "recepção completa"
+bit 6 = 1 ativar interrupção do tipo "transmissao completa"
+bit 5 = 0 desabilita interrupção do tipo "registrador de dados vazio"
+bit 4 = 1 habilita receptor 
+bit 3 = 1 habilita transmissor
+bit 2 = 0 configuração para uso de 8 bits de dados
+bit 1 = 0 desabilita nono bit
+bit 0 = 0 desabilita nono bit
+
+C:
+bit 7 = 0 USART assíncrono
+bit 6 = 0 USART assíncrono
+bit 5 = 0 Desabilitar modo de paridade
+bit 4 = 0 Desabilitar modo de paridade
+bit 3 = 1 uso de dois bits de parada
+bit 2 = 1 configuração para uso de 8 bits de dados
+bit 1 = 1 configuração para uso de 8 bits de dados
+bit 0 = 0 transmissão assíncrona
+
+-----------------------------------------------------------
+Interrupções:
+
+USART_TX_vect trans. completa
+
+USART_RX_vect recep. completa
+
+USART_UDRE_vect udr0 vazio
+
+
+-----------------------------------------------------------
+Transmissão
+
+r: "Comando: Acender LED - cor vermelha\n"
+g: "Comando: Acender LED - cor verde\n"
+b: "Comando: Acender LED - cor azul\n"
+y: "Comando: Acender LED - cor amarela\n"
+c: "Comando: Acender LED - cor ciano\n"
+m: "Comando: Acender LED - cor magenta\n"
+w: "Comando: Acender LED - cor branca\n"
+outro: "Comando incorreto\n"
+
+Além disso, sempre que não houver comandos a processar no buffer circular (ou seja, o buffer está vazio), a
+seguinte mensagem deve ser enviada: "Vazio!\n".

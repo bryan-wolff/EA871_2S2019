@@ -1,0 +1,69 @@
+No caso, usaremos um circuito RC junto com um Schmitt trigger (7414) para eliminar as oscilações
+nos respectivos sinais. Para evitar riscos durante a montagem do circuito, utilizem capacitores de poliéster. O valor da capacitância pode ser de 100 nF, enquanto a resistência pode ser de 10 .
+
+-----------------------------------------------------------------
+Botão A
+
+muda velocidade de transição
+1000ms, 500ms, 250ms, 125ms, 1000ms, ...
+INT0
+borda de subida
+interrupção do tipo pin-change
+Mais especificamente, escolhemos a PCINT1, gerada
+a partir do pino 0 da porta C, o qual está indicado no manual do microcontrolador como PCINT8.
+INT0_vect
+O botão de controle da velocidade, por sua vez, deve ser conectado ao pino associado à interrupção externa
+INT0 (pino 2 da porta D).
+
+-----------------------------------------------------------------
+Botão B
+
+muda o sentido da transição de cores: horário ou anti-horário
+Finalmente, como vamos utilizar a interrupção PCINT1, o botão que controla o sentido da transição de
+cores deve ser conectado ao pino 0 da porta C.
+interrupção tipo pin_change
+PCINT1_vect
+-----------------------------------------------------------------
+LED RGB
+os pinos 0 a 2 da porta B (ou seja, PB0 a PB2, indicados no diagrama de
+pinos do Arduino UNO) para acionar os terminais correspondentes às cores vermelha (R), verde (G) e azul
+(B) do LED RGB, respectivamente.
+
+pino PORTB (2,1,0) = (B,G,R)
+apagado:	000 = 	0b00000000
+vermelho:	001 = 	0b00000001
+verde:	010 = 	0b00000010
+azul:	100 = 	0b00000100
+amarelo:	011 = 	0b00000011
+ciano:	110 = 	0b00000110
+magenta:	101 = 	0b00000101
+branco:	111 = 	0b00000111
+
+-----------------------------------------------------------------
+CONFIGURAÇÕES DE INTERRUPÇÕES
+
+#include <avr/interrupt.h>
+
+; configurar interrupção externa INT0
+seta os dois bits menos significativos EICRA - a INT0 será ativada na borda de subida do pino 2 da porta D
+;habilita a interrupção INT0
+EIMSK //seta bit 0
+
+
+; configurar interrupção externa PCINT8 - PC0 pinchange
+setar bit 1 de PCICR habilitara as interrupções PCINT[14:8]
+PCICR |= 0b00000010;    // turn on port c
+As interrupções de troca de pinos são ativadas configurando certos bits no registro PCICR. O bit 0 liga a porta B (PCINT0 - PCINT7), o bit 1 liga a porta C (PCINT8 - PCINT14) e o bit 2 liga a porta D (PCINT16 - PCINT23)
+
+usamos a mascara para ativar um pino em particular, no caso o atmega328p possui  três máscaras: PCMSK0, PCMSK1 e PCMSK2, responsaveis pelos pinos do port B,C e D respectivamente.
+PCMSK1 |= 0b00000001;    // turn on pin PC0, which is PCINT8
+
+
+
+ISR(PCINT0_vect){}    // Port B, PCINT0 - PCINT7
+ISR(PCINT1_vect){}    // Port C, PCINT8 - PCINT14
+ISR(PCINT2_vect){}    // Port D, PCINT16 - PCINT23
+
+usarei
+Interrupção pin change ISR ( PCINT1 _vect) para A0 a A5 ou PC0 a PC5
+

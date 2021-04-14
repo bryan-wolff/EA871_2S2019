@@ -1,0 +1,62 @@
+
+imput capture associado ao temorizador 1:
+ICP1 - pino  8 do arduino - PB0
+
+TIMER1_CAPT_vect
+
+ISR(TIMER1_COMPA_vect)
+
+O principal desafio ao usar a unidade Input Capture é atribuir capacidade de processador suficiente para manipular o
+eventos recebidos. O tempo entre dois eventos é crítico. Se o processador não leu o valor capturado no
+ICR1 Registre-se antes que o próximo evento ocorra, o ICR1 será substituído por um novo valor. Nesse caso, o resultado
+da captura estará incorreta. Ao usar a interrupção de captura de entrada, o registro ICR1 deve ser lido o mais cedo possível no manipulador de interrupções
+rotina possível. Quando uma captura é ativada, o valor de 16 bits do contador (TCNT1) é gravado na captura de tela
+Registro (ICR1). O sinalizador de captura de entrada (ICF1) é definido no mesmo relógio do sistema em que o valor TCNT1 é copiado
+sem registro ICR1. Se ativado (ICIE1 = 1), o Sinalizador de captura de entrada gera uma interrupção na captura de entrada. o
+O sinalizador ICF1 é limpo automaticamente quando uma interrupção é executada. Quando uma captura é acionada, o valor de 16 bits do contador (TCNT1) é gravado na Captura de Entrada Registro (ICR1). O sinalizador de captura de entrada (ICF1) é definido no mesmo relógio do sistema em que o valor TCNT1 é copiado
+no registro ICR1. Se ativado (ICIE1 = 1), o Sinalizador de Captura de Entrada gera uma interrupção de Captura de Entrada. o
+O sinalizador ICF1 é limpo automaticamente quando a interrupção é executada. 
+O comparador é selecionado como fonte de disparo, definindo o bit de captura de entrada do comparador analógico (ACIC) no
+Controle comparador analógico e registro de status (ACSR). Esteja ciente de que a alteração da fonte de gatilho pode disparar um
+capturar. O sinalizador de captura de entrada deve, portanto, ser limpo após a alteração.
+
+
+TCCR1A: timer/counter control register A
+0: 0 Para modo de operaçao CTC
+1: 0 Para modo de operaçao CTC
+2: RESERVADO (não mexer)
+3: RESERVADO (não mexer)
+4: 0 Normal port operation, OC1A/OC1B disconnected
+5: 0Normal port operation, OC1A/OC1B disconnected
+6: 0 Normal port operation, OC1A/OC1B disconnected
+7: 0 Normal port operation, OC1A/OC1B disconnected
+
+
+0b01001100
+TCCR1B: timer/counter control register B
+0: 1 sem prescaler
+1: 0 sem prescaler
+2: 0 sem prescaler
+3:  1 Para modo de operaçao CTC
+4:  0 Para modo de operaçao CTC
+5:  RESERVADO 
+6: 1 : para captura em borda de subida
+7: 1 cancelador de ruído
+
+TIMSK1: Timer/counter2 interrupt mask register
+0: 0 Timer/Counter1 Overflow Interrupt Enable
+1: 1 Timer/Counter1 Output Compare Match A Interrupt Enable
+2: 0 Timer/Counter1 Output Compare Match B Interrupt Enable
+3: RESERVADO (não mexer)
+4: RESERVADO (não mexer)
+5: 1 Timer/Counter1, Input Capture Interrupt Enable
+6: RESERVADO (não mexer)
+7: RESERVADO (não mexer)
+
+
+sem prescaler
+compare match register = [16.000.000Hz / (prescaler * ( 1 / periodo de tempo desejado)] - 1
+compare match register = [16.000.000Hz / (1* ( 1 / 0,001)] - 1 = 15999
+OCR1A – Output Compare Register A = 15999
+
+se prescaler = 64, OCR1A = 249

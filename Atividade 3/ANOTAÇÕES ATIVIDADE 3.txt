@@ -1,0 +1,63 @@
+DDR 
+1 saida
+0 entrada
+
+-----------------------------------
+BOTÃO
+pino A0
+bit 0
+ddrc (0x27) - zerar bit 0
+ddrc = ddrc & 0b11111110
+pinc (0x26)
+-----------------------------------
+
+DISPLAY - PORTA D
+bit 1:a
+bit 2:b
+bit 3:c
+bit 4:d
+bit 5:e
+bit 6:f
+bit 7:g
+
+ddrd (0x2A) - setar bit 1-7
+ddrd = ddrd | 11111110
+portd (0x2B) 
+
+os lugares que tem y abaixo é o lugar do bit 0 que não pode ser mechido
+
+Numero
+0: abcdef = 0b0111111y = 0x7e
+1: bc = 0b0000110y = 0x0c
+2: abged = 0b1011011y = 0xb6
+3: abgcd = 0b1001111y = 0x9e
+4: fgbc = 0b1100110y = 0xcc
+5: afgcd = 0b1101101y = 0xda
+6: afgcde = 0b1111101y = 0xfa
+7: abc = 0b0000111y = 0x0e
+8: abcdefg = 0b1111111y = 0xfe
+9: abgfcd = 0b1101111y = 0xce
+
+//para acender um número 0 sem mexer no bit 0:
+*pportd = ((*pportd | 0b01111110) & 0b01111111);
+//para acender um número 1 sem mexer no bit 0: ******
+*pportd = ((*pportd | 0b00001100) & 0b00001101);
+//para acender um número 2 sem mexer no bit 0: *****
+*pportd = ((*pportd | 0b10110110) & 0b10110111);
+//para acender um número 3 sem mexer no bit 0: ******
+*pportd = ((*pportd | 0b10011110) & 0b10011111);
+//para acender um número 4 sem mexer no bit 0: ******
+*pportd = ((*pportd | 0b11001100) & 0b11001101);
+//para acender um número 5 sem mexer no bit 0: *******
+*pportd = ((*pportd | 0b11011010) & 0b11011011);
+//para acender um número 6 sem mexer no bit 0:
+*pportd = ((*pportd | 0b11111010) & 0b11111011);
+//para acender um número 7 sem mexer no bit 0:
+*pportd = ((*pportd | 0b00001110) & 0b00001111);
+//para acender um número 8 sem mexer no bit 0:
+*pportd = ((*pportd | 0b11111110) & 0b11111111);
+//para acender um número 9 sem mexer no bit 0:
+*pportd = ((*pportd | 0b11011110) & 0b11011111);
+
+
+
